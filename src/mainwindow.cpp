@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     QWidget *central = new QWidget(this);
     QVBoxLayout *layout = new QVBoxLayout;
-    QCalenderWidget *calender = new QcalendarWidget;
+    QCalendarWidget *calender = new QCalendarWidget;
     label = new QLabel("Hello, Wod!", this);
     label->setAlignment(Qt::AlignCenter);
     layout->addWidget(calender);
