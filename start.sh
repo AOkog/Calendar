@@ -1,9 +1,7 @@
 #!/bin/bash
-# start.sh - runs the Qt app inside the container
+set -e
 
-# Ensure DISPLAY is set (fallback to :0 if not)
-DISPLAY=${DISPLAY:-:0}
-
-export DISPLAY
+# Use host.docker.internal for Windows, fallback to :0
+export DISPLAY=${DISPLAY:-host.docker.internal:0.0}
 
 ./build/calendar-app
