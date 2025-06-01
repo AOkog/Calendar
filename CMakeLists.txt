@@ -16,6 +16,7 @@ add_executable(calendar-app
     src/main.cpp
     src/mainwindow.cpp
     src/mainwindow.h
+    src/calendardata.cpp
     resources/mainwindow.ui
 )
 
