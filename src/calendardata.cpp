@@ -1,62 +1,45 @@
 #include "calendardata.h"
 
-
 CalendarData::CalendarData(){
-    const QVector<QStringList> rows = {
-        QStringList{ QStringLiteral("Verne Nilsen"), QStringLiteral("123") },
-        QStringList{ QStringLiteral("Carlos Tang"), QStringLiteral("77") },
-        QStringList{ QStringLiteral("Bronwyn Hawcroft"), QStringLiteral("119") },
-        QStringList{ QStringLiteral("Alessandro Hanssen"), QStringLiteral("32") },
-        QStringList{ QStringLiteral("Andrew John Bakken"), QStringLiteral("54") },
-        QStringList{ QStringLiteral("Vanessa Weatherley"), QStringLiteral("85") },
-        QStringList{ QStringLiteral("Rebecca Dickens"), QStringLiteral("17") },
-        QStringList{ QStringLiteral("David Bradley"), QStringLiteral("42") },
-        QStringList{ QStringLiteral("Knut Walters"), QStringLiteral("25") },
-        QStringList{ QStringLiteral("Andrea Jones"), QStringLiteral("34") }
-    };
-    dateHoursEvents(rows);
-    QStringList hourLabels;
-    for (int i = 0; i <  current_date.rowCount(); ++i) {
-        hourLabels << QString("%1:00").arg(i);  // "0:00", "1:00", etc.
-    }
-    current_date.setVerticalHeaderLabels(hourLabels);
-}
-
-void CalendarData::dateHoursEvents(const QVector<QStringList> &rows) {
-    
-    current_date.clear();
-    QList<QStandardItem *> items;
-    for (const QStringList &row : rows) {
-        items.clear();
-        for (const QString &text : row)
-            items.append(new QStandardItem(text));
-        current_date.appendRow(items);
-    }
-    
+   QDate now = QDate::currentDate();
+    load(now);
 }
 
 QStandardItemModel* CalendarData::getCurrentDate(){
     return &current_date;
 }
 
-void CalendarData::dateHoursEvents(const QMap<QDate, QMap<QString, QStringList>> &events, QDate current) {
+void CalendarData::dateHoursEvents(const QMap<QDate, QMap<int, QStringList>> &events, QDate current) {
     dateHoursEvents(events.value(current));
 }
 
-void CalendarData::dateHoursEvents(const QMap<QString, QStringList> &events) {
+void CalendarData::dateHoursEvents(const QMap<int, QStringList> &events) {
     current_date.clear();
-     QList<QStandardItem *> items;
-      
-     for (auto it = events.begin(); it != events.end(); ++it) {
-        QString time = it.key();
-        QStringList events = it.value();
-     }
-     
-     
-     
-     QStringList hourLabels;
-    for (int i = 0; i <  current_date.rowCount(); ++i) {
-        hourLabels << QString("%1:00").arg(i);  // "0:00", "1:00", etc.
+    QList<QStandardItem*> items;
+    QStringList hourLabels;
+    for (auto it = events.begin(); it != events.end(); ++it) {
+        int time = it.key();
+        hourLabels << QString("%1:00").arg(time);
+        QStringList event_list = it.value();
+        items.clear();
+        for (const QString &text : event_list)
+            items.append(new QStandardItem(text));
+        current_date.appendRow(items);
     }
     current_date.setVerticalHeaderLabels(hourLabels);
+}
+
+void CalendarData::load(QDate date) {
+    QDate today = QDate::currentDate();
+    QDate todayagain(2025, 6, 2);
+     QDate todayagai(2025, 6, 5);
+      QDate todayaga(2025, 6, 6);
+    QMap<int, QStringList> today_test;
+    QStringList event_what_if = {"one is a very long sentence that will take up a lot of the screen", "two", "three"};
+    today_test.insert(5, event_what_if);
+      today_test.insert(23, event_what_if);
+    events_stored.insert(todayagain, today_test);
+    events_stored.insert(todayaga, today_test);
+    events_stored.insert(todayagai, today_test);
+    dateHoursEvents(events_stored, date);
 }
