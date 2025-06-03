@@ -14,13 +14,10 @@ private:
   QStandardItemModel current_date;
 public:
     CalendarData();
-    void storeEvent();
+    void storeEvent(int year, int month, int day, int hour, QString item);
     void removeEvent();
     void load(QDate date);
     void save();
-    void dateHoursEvents(const QVector<QStringList> &rows);
-    void dateHoursEvents(const QMap<QDate, QMap<int, QStringList>> &events, QDate current);
-    void dateHoursEvents(const QMap<int, QStringList> &events);
     QStandardItemModel* getCurrentDate();
 
 

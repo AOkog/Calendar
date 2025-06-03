@@ -9,12 +9,10 @@ QStandardItemModel* CalendarData::getCurrentDate(){
     return &current_date;
 }
 
-void CalendarData::dateHoursEvents(const QMap<QDate, QMap<int, QStringList>> &events, QDate current) {
-    dateHoursEvents(events.value(current));
-}
 
-void CalendarData::dateHoursEvents(const QMap<int, QStringList> &events) {
+void CalendarData::load(QDate current) {
     current_date.clear();
+    const QMap<int, QStringList> events = events_stored.value(current);
     QList<QStandardItem*> items;
     QStringList hourLabels;
     for (auto it = events.begin(); it != events.end(); ++it) {
@@ -27,19 +25,18 @@ void CalendarData::dateHoursEvents(const QMap<int, QStringList> &events) {
         current_date.appendRow(items);
     }
     current_date.setVerticalHeaderLabels(hourLabels);
+    
 }
 
-void CalendarData::load(QDate date) {
-    QDate today = QDate::currentDate();
-    QDate todayagain(2025, 6, 2);
-     QDate todayagai(2025, 6, 5);
-      QDate todayaga(2025, 6, 6);
-    QMap<int, QStringList> today_test;
-    QStringList event_what_if = {"one is a very long sentence that will take up a lot of the screen", "two", "three"};
-    today_test.insert(5, event_what_if);
-      today_test.insert(23, event_what_if);
-    events_stored.insert(todayagain, today_test);
-    events_stored.insert(todayaga, today_test);
-    events_stored.insert(todayagai, today_test);
-    dateHoursEvents(events_stored, date);
+void CalendarData::storeEvent(int year, int month, int day, int hour, QString item) {
+    QDate event_date(year, month, day);
+    if(events_stored.contains(event_date)) {
+        QMap<int, QStringList> today = events_stored.value(event_date);
+        today[hour].append(item);
+        events_stored[event_date] = today;
+    } else {
+        QMap<int, QStringList> today;
+        today.insert(hour, QStringList{item});
+        events_stored.insert(event_date, today);
+    }
 }

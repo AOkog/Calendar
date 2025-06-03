@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     layout2->addWidget(day);
     layout2->addWidget(hourLabel);
     layout2->addWidget(hour);
+    layout2->addWidget(new_event);
     layout2->addWidget(confirm_button);
     layout2->addWidget(back_button);
     event_page->setLayout(layout2);
@@ -34,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     hours->horizontalHeader()->hide();
     hours->setModel(one.getCurrentDate());
     
+     year->addItem("");
     year->addItem("2025");
     year->addItem("2026");
     hour->addItems(QStringList() << "" << "1" << "2" << "3" << "4" << "5" << "6" << "7" << "8" << "9" << "10" << "11" << "12" << "13" << "14" << "15" << "16" << "17" << "18" << "19" << "20" << "21" << "22" << "23" << "24");
@@ -48,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(day, &QComboBox::currentTextChanged, this, &MainWindow::dayChanged);
     connect(month, &QComboBox::currentTextChanged, this, &MainWindow::monthChanged);
     connect(hour, &QComboBox::currentTextChanged, this, &MainWindow::hourChanged);
+    connect(new_event, &QLineEdit::textChanged, this, &MainWindow::eventChanged);
 }
 
 MainWindow::~MainWindow() {}
@@ -66,7 +69,10 @@ void MainWindow::onBackButton() {
 }
 
 void MainWindow::onConfirmButton() {
-    stack->setCurrentWidget(central);
+    if (!new_event->text().isEmpty()) {
+        one.storeEvent(year_final, month_final, day_final, hour_final, item);
+        new_event->clear();
+    }
 }
 
 void MainWindow::yearChanged(const QString &text) {
@@ -94,9 +100,13 @@ void MainWindow::monthChanged(const QString &text) {
     if (index != -1) {
         day->setCurrentIndex(index);
     } 
-    month_final = text.toInt();
+    month_final = month->findText(text) + 2;
 }
 
 void MainWindow::hourChanged(const QString &text) {
     hour_final = text.toInt();
+}
+
+void MainWindow::eventChanged(const QString &text) {
+    item = text;
 }

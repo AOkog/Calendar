@@ -14,7 +14,7 @@
 #include <QStackedWidget>
 #include <QPushButton>
 #include <QComboBox>
-#include <string>
+#include <QLineEdit>
 class QLabel;
 
 class MainWindow : public QMainWindow {
@@ -44,10 +44,12 @@ private:
     QLabel *monthLabel = new QLabel("Select the Month", this);
     QLabel *hourLabel = new QLabel("Select the hour", this);
     QLabel *dayLabel = new QLabel("Select the day", this);
+    QLineEdit *new_event = new QLineEdit(this);
     int year_final;
     int hour_final;
     int day_final;
     int month_final;
+    QString item;
     void onBackButton();
     void onConfirmButton();
     void onChangeEvent();
@@ -56,6 +58,7 @@ private:
     void dayChanged(const QString &text);
     void monthChanged(const QString &text);
     void hourChanged(const QString &text);
+    void eventChanged(const QString &text);
 
 };
 
