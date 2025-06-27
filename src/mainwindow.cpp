@@ -4,7 +4,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    
+    one.readFile();
+    one.load(one.getQCurrent());
     stack->addWidget(central);
     stack->addWidget(event_page);
     
@@ -13,6 +14,15 @@ MainWindow::MainWindow(QWidget *parent)
     layout->addWidget(calender);
     layout->addWidget(hours);
     layout->addWidget(add_event);
+    layout->addWidget(label3);
+    layout->addLayout(removeLayout);
+    removeLayout->addWidget(label);
+    removeLayout->addWidget(label2);
+    layout->addLayout(removeLayout2);
+    removeLayout2->addWidget(hour2);
+    removeLayout2->addWidget(removeItem);
+    layout->addWidget(removeConfirm);
+    layout->addWidget(save);
     central->setLayout(layout);
     
     layout2->addWidget(yearLabel);
@@ -35,12 +45,13 @@ MainWindow::MainWindow(QWidget *parent)
     hours->horizontalHeader()->hide();
     hours->setModel(one.getCurrentDate());
     
-     year->addItem("");
+    year->addItem("");
     year->addItem("2025");
     year->addItem("2026");
     hour->addItems(QStringList() << "" << "1" << "2" << "3" << "4" << "5" << "6" << "7" << "8" << "9" << "10" << "11" << "12" << "13" << "14" << "15" << "16" << "17" << "18" << "19" << "20" << "21" << "22" << "23" << "24");
     month->addItems(QStringList() << "" << "January" << "February" << "March"  << "April" << "May" << "June" << "July" << "August" << "September" << "October" << "November" << "December");
     day->addItem("");
+    hour2->addItems(QStringList() << "" << "1" << "2" << "3" << "4" << "5" << "6" << "7" << "8" << "9" << "10" << "11" << "12" << "13" << "14" << "15" << "16" << "17" << "18" << "19" << "20" << "21" << "22" << "23" << "24");
 
     connect(calender, &QCalendarWidget::clicked, this, &MainWindow::onDateClicked);
     connect(add_event, &QPushButton::clicked, this, &MainWindow::onChangeEvent);
@@ -51,6 +62,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(month, &QComboBox::currentTextChanged, this, &MainWindow::monthChanged);
     connect(hour, &QComboBox::currentTextChanged, this, &MainWindow::hourChanged);
     connect(new_event, &QLineEdit::textChanged, this, &MainWindow::eventChanged);
+    connect(hour2, &QComboBox::currentTextChanged, this, &MainWindow::removeHourChanged);
+    connect(removeItem, &QComboBox::currentTextChanged, this, &MainWindow::removeItemChanged);
+    connect(removeConfirm, &QPushButton::clicked, this, &MainWindow::onRemoveConfirm);
+    connect(save, &QPushButton::clicked, this, &MainWindow::saveData);
 }
 
 MainWindow::~MainWindow() {}
@@ -58,6 +73,12 @@ MainWindow::~MainWindow() {}
 void MainWindow::onDateClicked(const QDate &date) {
     one.load(date);
     hours->setModel(one.getCurrentDate());
+    removeItem->clear();
+    int longest = one.getLongest();
+    for(int i = 1; i <= longest;i++) {
+        QString str = QString::number(i);
+        removeItem->addItem(str);
+    }
 }
 
 void MainWindow::onChangeEvent() {
@@ -66,6 +87,7 @@ void MainWindow::onChangeEvent() {
 
 void MainWindow::onBackButton() {
     stack->setCurrentWidget(central);
+    one.load(one.getQCurrent());
 }
 
 void MainWindow::onConfirmButton() {
@@ -100,7 +122,7 @@ void MainWindow::monthChanged(const QString &text) {
     if (index != -1) {
         day->setCurrentIndex(index);
     } 
-    month_final = month->findText(text) + 2;
+    month_final = month->findText(text);
 }
 
 void MainWindow::hourChanged(const QString &text) {
@@ -109,4 +131,19 @@ void MainWindow::hourChanged(const QString &text) {
 
 void MainWindow::eventChanged(const QString &text) {
     item = text;
+}
+
+void MainWindow::removeHourChanged(const QString &text) {
+   remove_hour = text.toInt();
+}
+void MainWindow::removeItemChanged(const QString &text) {
+   remove_index = text.toInt();
+}
+
+void MainWindow::onRemoveConfirm() {
+    QDate now = one.removeEvent(remove_hour, remove_index);
+    onDateClicked(now);
+}
+void MainWindow::saveData() {
+   one.writeFile();
 }
